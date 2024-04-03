@@ -31,6 +31,6 @@ resource "aws_lb_target_group" "tg" {
 resource "aws_lb_target_group_attachment" "tga" {
   count = length(var.instances)
   target_group_arn = aws_lb_target_group.tg.arn
-  target_id        = aws_instances[count.index]
+  target_id        = aws_instances.web[count.index].id
   port             = 80
 }
