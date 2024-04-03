@@ -1,3 +1,4 @@
+# modules/ec2/main.tf
 resource "aws_instance" "web" {
   count                       = length(var.ec2_names)
   ami                         = data.aws_ami.amazon-2.id
@@ -5,9 +6,9 @@ resource "aws_instance" "web" {
   associate_public_ip_address = true
   vpc_security_group_ids      = [var.sg_id]
   subnet_id                   = var.subnets[count.index]
-  availability_zone         = data.aws_availability_zones.available.names[count.index]
-  user_data = <<EOF
-#!/bin/bash
+  availability_zone           = data.aws_availability_zones.available.names[count.index]
+  user_data = <<-EOF
+    #!/bin/bash
 
     sudo yum update -y
     sudo yum install -y nginx
@@ -73,4 +74,8 @@ resource "aws_instance" "web" {
   tags = {
     Name = var.ec2_names[count.index]
   }
+}
+
+output "instances" {
+  value = aws_instance.web[*].id
 }
